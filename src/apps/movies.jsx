@@ -1,23 +1,44 @@
 
 import React, { useEffect, useState } from "react";
 import { withRouter } from "react-router-dom";
-import { getUpcomingMoview, searchForMovie, searchForTvShows, getMovieDetail, getTrendingMovieList ,getTvshowsDetail } from '../store/actions/index';
+import { getUpcomingMoview, searchForMovie, searchForTvShows, getMovieDetail, getTrendingMovieList, getTvshowsDetail } from '../store/actions/index';
 import { connect } from "react-redux";
 import './movies.scss';
-import Swiper from 'swiper';
-import { StyledNavbar, Container, Swiperwrapper, Swiperslide, MovieCard, CardImg, StyledInput } from './styles';
+import Swiper, { Autoplay } from 'swiper';
+import { StyledNavbar, Container, StyledInput } from './styles';
 import Modal from './Modal.js';
 import logo from '../assets/theater.png';
+import AutoPlayMovie from './autoPlayMovies';
+import UpcomingMovies from './upcomingMovies';
+import TrendingMovie from './trensdingMovies';
+import TVShows from './tvShows';
 
-const RentedListing = (props) => {
+const MovieListing = (props) => {
+  Swiper.use([Autoplay]);
   let { movieList, tvShows, movieDetail, trendingMovies } = props.movies;
   const [modal, showModal] = useState(false);
   const [modalData, setModalData] = useState({});
   const [query, setQuery] = useState("");
-  new Swiper('.swiper-container', {
+  let page = 1;
+  let autoPlayList = [];
+  autoPlayList.push(...movieList.results);
+  new Swiper('.swiper-container2', {
+    spaceBetween: 10,
+    loop: true,
+    centeredSlides: true,
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+  });
+  var swiper = new Swiper('.swiper-container', {
     slidesPerView: 1,
     spaceBetween: 10,
-    // init: false,
+    init: true,
     pagination: {
       el: '.swiper-pagination',
       clickable: true,
@@ -37,20 +58,30 @@ const RentedListing = (props) => {
       },
       1024: {
         slidesPerView: 7,
-        spaceBetween: 12,
+        spaceBetween: 5,
       },
     }
   });
+  if (swiper[0] !== undefined) {
+    swiper[0].on('reachEnd', function () {
+      page = page + 1;
+      // props.dispatch(getUpcomingMoview(page, movieList));
+      swiper[0].init();
+    });
+  }
 
   useEffect(() => {
-    props.dispatch(getUpcomingMoview());
+    props.dispatch(getUpcomingMoview(page));
     props.dispatch(getTrendingMovieList());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearchSubmit = (queries) => {
     setQuery(queries);
-    props.dispatch(searchForMovie(queries));
-    props.dispatch(searchForTvShows(queries));
+    if (queries !== "") {
+      props.dispatch(searchForMovie(queries));
+      props.dispatch(searchForTvShows(queries));
+    }
   };
 
   const getModalData = (id, For) => {
@@ -59,8 +90,8 @@ const RentedListing = (props) => {
     } else {
       props.dispatch(getTvshowsDetail(id));
     }
-    showModal(true);
     setModalData(movieDetail)
+    showModal(true);
   }
 
   return (
@@ -77,71 +108,12 @@ const RentedListing = (props) => {
             onChange={(event) => handleSearchSubmit(event.target.value)}
           />
         </StyledNavbar>
+        <AutoPlayMovie autoplayList={autoPlayList}></AutoPlayMovie>
         <div className="listing">
-          {
-            query !== '' ?
-              <p className="upcoming-movie-title">Movies</p>
-              :
-              <p className="upcoming-movie-title">Upcoming Movies</p>
-          }
-          <div className="swiper-container">
-            <Swiperwrapper className="swiper-wrapper">
-              {
-                movieList.results.map((data, index) => {
-                  return (
-                    <div className="swiper-slide" key={index} onClick={() => getModalData(data.id, 'movie')}>
-                      <MovieCard>
-                        <CardImg src={`https://image.tmdb.org/t/p/original${data.poster_path}`} alt="1212"></CardImg>
-                      </MovieCard>
-                    </div>
-                  )
-                })
-              }
-            </Swiperwrapper>
-            <div className="swiper-pagination"></div>
-          </div>
-          {
-            query === '' && (
-              <div className="swiper-container">
-                <p className="trending-movie-title">Trending Movies</p>
-                <Swiperwrapper className="swiper-wrapper">
-                  {
-                    trendingMovies.results.map((data, index) => {
-                      return (
-                        <Swiperslide className="swiper-slide" key={index} onClick={() => getModalData(data.id, 'movie')}>
-                          <MovieCard>
-                            <CardImg src={`https://image.tmdb.org/t/p/original${data.poster_path}`} alt="1212"></CardImg>
-                          </MovieCard>
-                        </Swiperslide>
-                      )
-                    })
-                  }
-                </Swiperwrapper>
-                <div className="swiper-pagination"></div>
-              </div>
-            )
-         }
-          {
-            query !== '' && (
-              <div className="swiper-container">
-                <p className="tv-shows-title">Tv Shows</p>
-                <Swiperwrapper className="swiper-wrapper">
-                  {
-                    tvShows.results.map((data, index) => {
-                      return (
-                        <Swiperslide className="swiper-slide" key={index} onClick={() => getModalData(data.id, 'tv')}>
-                          <MovieCard>
-                            <CardImg src={`https://image.tmdb.org/t/p/original${data.poster_path}`} alt="1212"></CardImg>
-                          </MovieCard>
-                        </Swiperslide>
-                      )
-                    })
-                  }
-                </Swiperwrapper>
-                <div className="swiper-pagination"></div>
-              </div>
-            )
-          }
+          <UpcomingMovies movieList={movieList.results} query={query} getModalData={getModalData}></UpcomingMovies>
+          <TrendingMovie trendingMovies={trendingMovies.results} query={query} getModalData={getModalData}></TrendingMovie>
+          <TVShows tvShows={tvShows.results} query={query} getModalData={getModalData}></TVShows>
+
         </div>
       </div>
       <Modal show={modal} className="row" movieDetail={movieDetail} showModal={showModal} modalData={modalData}></Modal>
@@ -151,4 +123,4 @@ const RentedListing = (props) => {
 const select = (state) => ({
   movies: state.movies
 })
-export default connect(select)(withRouter(RentedListing));
+export default connect(select)(withRouter(MovieListing));

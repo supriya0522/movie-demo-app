@@ -65,14 +65,15 @@ export const Swiperslide = styled.div`
 
 export const MovieCard = styled.div`
   display: flex;
+  align-self: center;
   box-shadow: 0px 0px 80px -25px rgba(0,0,0, 0.5);
   transition: all 0.4s;
   margin-right: 0px;
 `;
 
 export const CardImg = styled.img`
-  width: 100%;
-  height: 250px;
+  width: 98%;
+  height: 200px;
   :hover {
     transition: all 0.4s;
     cursor: pointer;
@@ -80,6 +81,33 @@ export const CardImg = styled.img`
     box-shadow: 0px 0px 120px -25px #000000;
     elevation: 30deg;
   }
+`;
+
+export const MainCardImg = styled.img`
+  width: 35%;
+  height: 285px;
+  :hover {
+    transition: all 0.4s;
+    cursor: pointer;
+    transform: scale(1.06);
+    box-shadow: 0px 0px 120px -25px #000000;
+    elevation: 30deg;
+  }
+  @media screen and (max-width: 877px) {
+      width: 100%;
+    }
+  }
+`;
+
+export const MainMovieCard = styled.div`
+  width: 100%;
+  display: flex;
+  align-self: center;
+  box-shadow: 0px 0px 80px -25px rgba(0,0,0, 0.5);
+  transition: all 0.4s;
+  margin-right: 0px;
+  padding-top: 65px;
+  justify-content: center
 `;
 
 export const StyledLink = styled(NavLink)`

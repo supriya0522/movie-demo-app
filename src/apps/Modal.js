@@ -1,12 +1,12 @@
 import './modal.css';
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef } from "react";
 import { MovieTitle, RatingTitle, ReleaseDate, MovieDetail, RatingDetail, MovieDescription } from './styles';
 
 const Modal = ({ show, movieDetail, showModal}) => {
 const node = useRef(null);
 
   const showHideClassName = show ? "modal" : "modal display-none";
-  const closeModal = useCallback((e) => {
+  const closeModal = (e) => {
     if (node.current !== null) {
       movieDetail = {};
       if (node.current.contains(e.target)) {
@@ -15,10 +15,10 @@ const node = useRef(null);
         showModal(false);
       }
     }
-  });
+  };
   useEffect(() => {
     document.addEventListener("mousedown", closeModal);
-  }, [closeModal]);
+  });
   return (
     <div className={showHideClassName}>
       <div className="modal-main" ref={node}>

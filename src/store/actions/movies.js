@@ -11,10 +11,10 @@ export const SET_DETAIL_SUCESS = "SET_DETAIL_SUCESS";
 export const SET_TRENDING_MOVIES = "SET_TRENDING_MOVIES";
 export const SET_TRENDING_MOVIES_SUCESS = "SET_TRENDING_MOVIES_SUCESS";
 
-export function getUpcomingMoview() {
+export function getUpcomingMoview(page, movieList) {
   return function (dispatch) {
     dispatch({ type: GET_EDIT_PROFILE_INIT });
-    getmovies()
+    getmovies(page)
       .then((response) => {
         dispatch({ type: SET_TOKEN, data: response });
         return dispatch({ type: SET_TOKEN_SUCESS, data: response });

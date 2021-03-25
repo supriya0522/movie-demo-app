@@ -1,8 +1,8 @@
 import AuthAxios from "../../AuthAxios";
 
-export async function getmovies() {
+export async function getmovies(page) {
   try {
-    const res = await AuthAxios.get('https://api.themoviedb.org/3/movie/upcoming?api_key=21d64656ed935bd96c47b31f3811b145&video=true&page=1')
+    const res = await AuthAxios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=21d64656ed935bd96c47b31f3811b145&video=true&page=${page}`)
     return res.data;
   } catch (err) {
     if (err.response.status === 400) {

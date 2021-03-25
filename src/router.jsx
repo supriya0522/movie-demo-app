@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import RentedListing from './apps';
+import MovieListing from './apps';
 
 class Routes extends Component {
   render() {
@@ -8,7 +8,7 @@ class Routes extends Component {
       <BrowserRouter>
         <React.Suspense>
           <Switch>
-            <Route exact path='/' component={RentedListing} />
+            <Route exact path='/' component={MovieListing} />
           </Switch>
         </React.Suspense>
       </BrowserRouter>
